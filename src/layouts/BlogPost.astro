@@ -13,6 +13,7 @@ const { title, description, pubDate, updatedDate, heroImage, heroBackground, pag
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={description} />
+		{heroImage && <link rel="preload" href={heroImage} as="image" />}
 		<style>
 			main {
 				width: calc(100% - 2em);
@@ -34,11 +35,11 @@ const { title, description, pubDate, updatedDate, heroImage, heroBackground, pag
 			}
 			.hero-title {
 				font-family: "Superglue";
-				font-size: 3.5rem;
+				font-size: 5.5rem;
 				color: white;
 				position: absolute;
 				top: 2rem;
-				left: 2rem;
+				right: 2rem;
 				margin: 0;
 				z-index: 10;
 			}
@@ -68,9 +69,9 @@ const { title, description, pubDate, updatedDate, heroImage, heroBackground, pag
 			}
 			@media (max-width: 720px) {
 				.hero-title {
-					font-size: 2rem;
+					font-size: 3rem;
 					top: 1rem;
-					left: 1rem;
+					right: 1rem;
 				}
 			}
 		</style>
