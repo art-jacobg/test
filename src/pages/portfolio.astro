@@ -10,19 +10,20 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	<head>
 		<BaseHead title="Portfolio | {SITE_TITLE}" description={SITE_DESCRIPTION} />
 		<style>
-			.hero-container { margin: 0; padding: 0; width: 100%; }
+			.hero-container { margin: 0; padding: 0; width: 100%; position: relative; }
 			.hero-image { width: 100%; height: auto; display: block; margin: 0; padding: 0; }
+			.page-title { font-family: "Superglue"; font-size: 3.5rem; color: white; position: absolute; top: 2rem; left: 2rem; margin: 0; z-index: 10; }
 			main { background: white; margin: 0; padding: 3em 1em; width: 100%; max-width: 100%; }
-			@media (max-width: 720px) { main { padding: 2em 1em; } }
+			@media (max-width: 720px) { .page-title { font-size: 2rem; top: 1rem; left: 1rem; } main { padding: 2em 1em; } }
 		</style>
 	</head>
 	<body>
 		<Header />
 		<div class="hero-container">
 			<img class="hero-image" src="/portfolio banner.png" alt="Portfolio Banner" />
+			<h1 class="page-title">PORTFOLIO</h1>
 		</div>
 		<main>
-			<h1>Portfolio</h1>
 			<p>Showcase your projects and work here.</p>
 		</main>
 		<Footer />

@@ -7,7 +7,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroBackground, pageTitle } = Astro.props;
 ---
 
 <html lang="en">
@@ -18,9 +18,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				width: calc(100% - 2em);
 				max-width: 100%;
 				margin: 0;
+				position: relative;
 			}
 			.hero-image {
 				width: 100%;
+				background-size: cover;
+				background-position: center;
+				position: relative;
 			}
 			.hero-image img {
 				display: block;
@@ -28,6 +32,17 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
 			}
+			.hero-title {
+				font-family: "Superglue";
+				font-size: 3.5rem;
+				color: white;
+				position: absolute;
+				top: 2rem;
+				left: 2rem;
+				margin: 0;
+				z-index: 10;
+			}
+			.hero-bg { color: white; }
 			.prose {
 				width: 720px;
 				max-width: calc(100% - 2em);
@@ -51,6 +66,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+			@media (max-width: 720px) {
+				.hero-title {
+					font-size: 2rem;
+					top: 1rem;
+					left: 1rem;
+				}
+			}
 		</style>
 	</head>
 
@@ -58,10 +80,11 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Header />
 		<main>
 			<article>
-				<div class="hero-image">
-					{heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
+				<div class="hero-image" style={heroBackground && heroImage ? `background-image: url('${heroImage}'); height: 50vh;` : ''}>
+					{!heroBackground && heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
+					{heroBackground && pageTitle && <h1 class="hero-title">{pageTitle}</h1>}
 				</div>
-				<div class="prose">
+				<div class={`prose ${heroBackground ? 'hero-bg' : ''}`}>
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
