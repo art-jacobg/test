@@ -1,0 +1,30 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Contact | {SITE_TITLE}" description={SITE_DESCRIPTION} />
+		<style>
+			.hero-container { margin: 0; padding: 0; width: 100%; }
+			.hero-image { width: 100%; height: auto; display: block; margin: 0; padding: 0; }
+			main { background: white; margin: 0; padding: 3em 1em; width: 100%; max-width: 100%; }
+			@media (max-width: 720px) { main { padding: 2em 1em; } }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<div class="hero-container">
+			<img class="hero-image" src="/contact banner.png" alt="Contact Banner" />
+		</div>
+		<main>
+			<h1>Contact</h1>
+			<p>Get in touch with me here.</p>
+		</main>
+		<Footer />
+	</body>
+</html>
