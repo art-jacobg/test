@@ -354,7 +354,7 @@ const illustrativeWorkGroups = [
       .ilw-group { display: none; }
       .ilw-group.visible { display: block; }
 
-      .ilw-group-title {
+      :global(.ilw-group-title) {
         font-family: "Superglue", sans-serif;
         font-size: clamp(24px, 3vw, 44px);
         color: white;
@@ -362,7 +362,7 @@ const illustrativeWorkGroups = [
         margin: 0 0 6px 0;
       }
 
-      .ilw-group-desc {
+      :global(.ilw-group-desc) {
         font-size: 14px;
         color: rgba(255,255,255,0.85);
         line-height: 1.8;
@@ -772,7 +772,7 @@ const illustrativeWorkGroups = [
                       data-alt={work.alt}
                       data-index={index}
                     >
-                      <img src={work.src} alt={work.alt} loading="lazy" />
+                      <img src={work.src} alt={work.alt} loading="lazy" decoding="async" />
                       <div class="ilw-item-overlay">
                         <span class="ilw-item-label">{group.title} #{index + 1}</span>
                       </div>
@@ -835,6 +835,8 @@ const illustrativeWorkGroups = [
 
     <!-- DESKTOP SCRIPT -->
     <script>
+      import { createImagePreloader } from '../../scripts/portfolio-media';
+
       const modal       = document.getElementById('ilwModal') as HTMLElement;
       const closeBtn     = document.getElementById('ilwClose') as HTMLButtonElement;
       const track        = document.getElementById('ilwTrack') as HTMLElement;
@@ -857,19 +859,7 @@ const illustrativeWorkGroups = [
       let didSwipe = false;
 
       const SLIDE_MS = 280;
-      const imageCache = new Map<string, HTMLImageElement>();
-
-      function preload(src: string | undefined): Promise<void> {
-        if (!src) return Promise.resolve();
-        if (imageCache.has(src)) return Promise.resolve();
-        return new Promise((resolve) => {
-          const im = new Image();
-          im.onload = () => resolve();
-          im.onerror = () => resolve();
-          im.src = src;
-          imageCache.set(src, im);
-        });
-      }
+      const preload = createImagePreloader();
 
       function preloadAround(index: number): Promise<void[]> {
         const targets = [
@@ -927,15 +917,14 @@ const illustrativeWorkGroups = [
 
       function openModal(group: WorkItem[], index: number): void {
         currentGroup = group;
-        preloadAround(index).then(() => {
-          showImage(index);
-          modal.classList.add('active');
-          const scrollY = window.scrollY;
-          document.body.style.top = `-${scrollY}px`;
-          document.body.dataset.scrollY = String(scrollY);
-          document.body.classList.add('ilw-modal-open');
-          bgVideo?.pause();
-        });
+        showImage(index);
+        modal.classList.add('active');
+        const scrollY = window.scrollY;
+        document.body.style.top = `-${scrollY}px`;
+        document.body.dataset.scrollY = String(scrollY);
+        document.body.classList.add('ilw-modal-open');
+        bgVideo?.pause();
+        void preloadAround(index);
       }
 
       function closeModal(): void {
@@ -1033,7 +1022,7 @@ const illustrativeWorkGroups = [
     </script>
 
     <!-- MOBILE SCRIPT -->
-    <script define:vars={{ illustrativeWorkGroups }}>
+    <script is:inline define:vars={{ illustrativeWorkGroups }}>
       const modalM      = document.getElementById('ilwModalMobile');
       const imgAM       = document.getElementById('ilwModalImgMobileA');
       const imgBM       = document.getElementById('ilwModalImgMobileB');
@@ -1080,7 +1069,7 @@ const illustrativeWorkGroups = [
           <div class="ilw-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
             ${group.works.map((work, index) => `
               <div class="ilw-item" data-src="${work.src}" data-alt="${work.alt}" data-index="${index}" style="border-radius:16px;overflow:hidden;">
-                <img src="${work.src}" alt="${work.alt}" loading="lazy" />
+                <img src="${work.src}" alt="${work.alt}" loading="lazy" decoding="async" />
               </div>
             `).join('')}
           </div>

@@ -749,13 +749,15 @@ const ceramicsWorks = [
                     class="media-gif"
                     src="/wizardjuice.gif"
                     alt="Wizard Juice animation"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div class="media-embed">
                   <iframe
                     src="https://www.youtube.com/embed/jTkYjbenrzo?si=tuZyY7iSfbkIBztg"
                     title="YouTube video player"
-                    frameborder="0"
+                    loading="lazy"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerpolicy="strict-origin-when-cross-origin"
                     allowfullscreen
@@ -781,7 +783,7 @@ const ceramicsWorks = [
                   data-alt={work.alt}
                   data-index={index}
                 >
-                  <img src={work.src} alt={work.alt} loading="lazy" />
+                  <img src={work.src} alt={work.alt} loading="lazy" decoding="async" />
                   <div class="ilw-item-overlay">
                     <span class="ilw-item-label">Ceramics #{index + 1}</span>
                   </div>
@@ -810,6 +812,8 @@ const ceramicsWorks = [
     </div>
 
     <script>
+      import { createImagePreloader } from '../../scripts/portfolio-media';
+
       const modal     = document.getElementById('ilwModal') as HTMLElement;
       const imgA      = document.getElementById('ilwModalImgA') as HTMLImageElement;
       const imgB      = document.getElementById('ilwModalImgB') as HTMLImageElement;
@@ -831,19 +835,7 @@ const ceramicsWorks = [
       let frontEl = imgA;
       let backEl = imgB;
 
-      const imageCache = new Map<string, HTMLImageElement>();
-
-      function preload(src: string | undefined): Promise<void> {
-        if (!src) return Promise.resolve();
-        if (imageCache.has(src)) return Promise.resolve();
-        return new Promise((resolve) => {
-          const im = new Image();
-          im.onload = () => resolve();
-          im.onerror = () => resolve();
-          im.src = src;
-          imageCache.set(src, im);
-        });
-      }
+      const preload = createImagePreloader();
 
       function preloadAround(index: number): Promise<void[]> {
         const targets = [
@@ -919,11 +911,10 @@ const ceramicsWorks = [
 
       function openModal(group: WorkItem[], index: number): void {
         currentGroup = group;
-        preloadAround(index).then(() => {
-          showImage(index);
-          modal.classList.add('active');
-          document.body.classList.add('ilw-modal-open');
-        });
+        showImage(index);
+        modal.classList.add('active');
+        document.body.classList.add('ilw-modal-open');
+        void preloadAround(index);
       }
 
       function closeModal(): void {

@@ -57,16 +57,17 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
         z-index: 2;
         width: min(1050px, 90vw);
         margin: 0 auto;
-        padding: clamp(3rem, 6vw, 5rem) 1rem clamp(3rem, 6vw, 5rem);
+        padding: clamp(4rem, 8vw, 7rem) 1rem clamp(10rem, 16vw, 14rem);
       }
 
       /* ── PAGE TITLE ── */
       .ilw-title {
         font-family: "Superglue", sans-serif;
-        font-size: clamp(2rem, 3.8vw, 58px);
+        font-size: clamp(3rem, 5.2vw, 82px);
         line-height: 0.9;
         color: white;
-        margin: 0 0 clamp(1.25rem, 2vw, 2.5rem) 0;
+        margin: 0 0 clamp(3rem, 4vw, 6rem) 0;
+        transform: translateY(calc(-4rem + 1vh));
         text-align: center;
         text-transform: uppercase;
         letter-spacing: -0.04em;
@@ -77,7 +78,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
       .ilw-page-switcher {
         position: relative;
         width: fit-content;
-        margin: 0 0 clamp(1rem, 2vw, 1.5rem) 0;
+        margin: 0 0 clamp(3rem, 5vw, 5rem) 0;
         z-index: 5;
       }
 
@@ -170,11 +171,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
       /* ── INTRO BOX ── */
       .ilw-intro {
         position: relative;
-        width: min(580px, 100%);
-        margin: 0 auto clamp(1.25rem, 2.5vw, 2.5rem) auto;
+        width: min(680px, 100%);
+        margin: 0 auto clamp(2rem, 4vw, 3.5rem) auto;
         border-radius: 18px;
         overflow: visible;
-        padding: clamp(1.25rem, 2.5vw, 2.5rem);
+        padding: clamp(2rem, 4vw, 3.5rem);
         box-shadow: 0 28px 80px rgba(0,0,0,0.28);
       }
 
@@ -258,8 +259,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
         justify-content: space-between;
         align-items: baseline;
         gap: clamp(1rem, 2vw, 2rem);
-        margin-top: clamp(5rem, 8vw, 9rem);
-        margin-bottom: clamp(1rem, 2vw, 1.5rem);
+        margin-top: clamp(10rem, 18vw, 16rem);
+        margin-bottom: clamp(6rem, 8vw, 8rem);
       }
 
       .works-title {
@@ -335,16 +336,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
         flex-direction: column;
         gap: 10px;
         min-width: 0;
-      }
-
-      .project-img-hint {
-        font-family: "Superglue", sans-serif;
-        font-size: 9px;
-        color: rgba(0,0,0,0.4);
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        text-align: center;
-        margin: 0;
       }
 
       /* ── TEXT SIDE ── */
@@ -438,25 +429,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
         -webkit-user-drag: none;
       }
 
-      .lightbox-hint {
-        position: fixed;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-family: "Superglue", sans-serif;
-        font-size: 10px;
-        color: rgba(255,255,255,0.45);
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-
-      .lightbox.active .lightbox-hint {
-        opacity: 1;
-      }
-
       .lightbox-close {
         position: absolute;
         top: 18px;
@@ -520,7 +492,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
         .ilw-hero {
           height: auto;
-          overflow: clip;
+          overflow: hidden;
         }
 
         .ilw-wrap {
@@ -534,7 +506,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
         /* dropdown acts as the page title on mobile — bigger + more breathing room */
         .ilw-page-switcher {
-          margin: 0 0 2.5rem 0;
+          margin: 0 0 5rem 0;
         }
 
         .ilw-page-switch-btn {
@@ -551,6 +523,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
           width: 100%;
           margin-left: auto;
           margin-right: auto;
+          margin-bottom: 5rem;
           padding: 24px 18px;
           overflow: visible;
           clip-path: inset(-20px -100vw -100vw -100vw);
@@ -567,8 +540,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
         .works-header {
           flex-direction: column;
           align-items: flex-start;
-          margin-top: clamp(5rem, 12vw, 7rem);
-          margin-bottom: 0.75rem;
+          margin-top: clamp(10rem, 22vw, 13rem);
+          margin-bottom: 5rem;
         }
 
         .works-title {
@@ -707,10 +680,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
                     class="project-img"
                     src="/portfolio/upcoming/swordcomps.webp"
                     alt="Sword Compositions — Future Terraria Mod"
+                    loading="lazy"
+                    decoding="async"
                     id="swordImg"
                   />
                 </div>
-                <p class="project-img-hint">↑ Click to enlarge</p>
               </div>
 
               <!-- TEXT SIDE -->
@@ -737,8 +711,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
     <!-- LIGHTBOX -->
     <div class="lightbox" id="lightbox">
       <button class="lightbox-close" id="lightboxClose" aria-label="Close">&#x2715;</button>
-      <img src="/portfolio/upcoming/swordcomps.webp" alt="Sword Compositions — Future Terraria Mod" />
-      <p class="lightbox-hint">Scroll to zoom · Drag to pan · Double-click to reset · Click outside to close</p>
+      <img data-src="/portfolio/upcoming/swordcomps.webp" alt="Sword Compositions — Future Terraria Mod" />
     </div>
 
     <script>
@@ -767,6 +740,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
       }
 
       function openLightbox(): void {
+        if (!lbImg.getAttribute('src')) lbImg.src = lbImg.dataset.src ?? '';
         resetZoom();
         lightbox.classList.add('active');
       }

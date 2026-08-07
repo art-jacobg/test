@@ -4,7 +4,6 @@ import sitemap from "@astrojs/sitemap";
 import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
-  prefetch: true,
   site: "https://art-jacobg.com",
   integrations: [mdx(), sitemap()],
   adapter: cloudflare({

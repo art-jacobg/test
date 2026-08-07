@@ -9,7 +9,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 <html lang="en">
   <head>
     <BaseHead title={`Portfolio | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
-    <link rel="preload" href="/portfoliobannerani.webm" as="video" fetchpriority="high" />
+    <link rel="preload" href="/portfoliobannerani.webm" as="video" fetchpriority="high" media="(min-width: 769px)" />
 
     <style>
       *, *::before, *::after { box-sizing: border-box; }
@@ -55,8 +55,7 @@ html {
         pointer-events: none;
       }
 
-      .hero-video.desktop { display: block; }
-      .hero-video.mobile { display: none; }
+      .hero-video { display: block; }
 
       .page-title {
         font-family: "Superglue";
@@ -341,9 +340,7 @@ html {
     overflow: hidden;  /* back to hidden so it clips the video properly */
   }
 
-  .hero-video.desktop { display: none; }
-
-  .hero-video.mobile {
+  .hero-video {
     display: block;
     position: absolute;  /* back to absolute, contained within hero-container */
     inset: 0;
@@ -575,11 +572,9 @@ html {
   <main>
     <div class="page-transition-content">
       <div class="hero-container">
-        <video class="hero-video desktop" autoplay muted loop playsinline preload="metadata">
-          <source src="/portfoliobannerani.webm" type="video/webm" />
-        </video>
-        <video class="hero-video mobile" autoplay muted loop playsinline preload="metadata">
-          <source src="/portfoliomobile.webm" type="video/webm" />
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata">
+          <source src="/portfoliobannerani.webm" type="video/webm" media="(min-width: 769px)" />
+          <source src="/portfoliomobile.webm" type="video/webm" media="(max-width: 768px)" />
         </video>
 
         <div class="portfolio-overlay">

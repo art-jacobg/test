@@ -73,6 +73,7 @@ const cardCount = 22;
         line-height: 0.9;
         color: white;
         margin: 0 0 clamp(4rem, 7vw, 9rem) 0;
+        transform: translateY(3vh);
         text-align: center;
         text-transform: uppercase;
         letter-spacing: -0.04em;
@@ -85,6 +86,7 @@ const cardCount = 22;
         width: fit-content;
         margin: 0 0 clamp(1rem, 2vw, 1.5rem) 0;
         z-index: 5;
+        transform: translateY(-0.75rem);
       }
 
       .ilw-page-switch-btn {
@@ -505,6 +507,8 @@ const cardCount = 22;
         .ilw-intro-bg {
           z-index: 0;
         }
+
+        .ilw-grid {
           grid-template-columns: repeat(2, 1fr);
           gap: 0.75rem;
         }
@@ -598,7 +602,7 @@ const cardCount = 22;
                 data-back={`/portfolio/tarot/${i} back.webp`}
                 data-index={i}
               >
-                <img src={`/portfolio/tarot/${i}.webp`} alt={`Tarot card ${i}`} loading="lazy" />
+                <img src={`/portfolio/tarot/${i}.webp`} alt={`Tarot card ${i}`} loading="lazy" decoding="async" />
               </div>
             ))}
           </div>
@@ -647,6 +651,8 @@ const cardCount = 22;
     </div>
 
     <script>
+      import { createImagePreloader } from '../scripts/portfolio-media';
+
       const modal        = document.getElementById('modal') as HTMLElement;
       const cardA        = document.getElementById('modalCardA') as HTMLElement;
       const cardB        = document.getElementById('modalCardB') as HTMLElement;
@@ -673,19 +679,7 @@ const cardCount = 22;
       let frontCard = cardA;
       let backCard = cardB;
 
-      const imageCache = new Map<string, HTMLImageElement>();
-
-      function preload(src: string | undefined): Promise<void> {
-        if (!src) return Promise.resolve();
-        if (imageCache.has(src)) return Promise.resolve();
-        return new Promise((resolve) => {
-          const im = new Image();
-          im.onload = () => resolve();
-          im.onerror = () => resolve();
-          im.src = src;
-          imageCache.set(src, im);
-        });
-      }
+      const preload = createImagePreloader();
 
       function preloadCard(index: number): Promise<void[]> {
         const data = cardData[index];
@@ -730,7 +724,6 @@ const cardCount = 22;
         modalPrev.disabled = currentIndex === 0;
         modalNext.disabled = currentIndex === cardData.length - 1;
 
-        preloadAround(currentIndex);
       }
 
       function navigateWithSlide(newIndex: number, direction: 'left' | 'right'): void {
@@ -776,10 +769,9 @@ const cardCount = 22;
       }
 
       function openModal(index: number): void {
-        preloadAround(index).then(() => {
-          showCard(index);
-          modal.classList.add('active');
-        });
+        showCard(index);
+        modal.classList.add('active');
+        void preloadAround(index);
       }
 
       function closeModal(): void {
