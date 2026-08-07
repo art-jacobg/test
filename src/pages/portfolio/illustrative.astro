@@ -948,16 +948,29 @@ const illustrativeWorkGroups = [
         setTimeout(() => { imgPrev.src = ''; imgCurrent.src = ''; imgNext.src = ''; }, 300);
       }
 
-      document.querySelectorAll<HTMLElement>('.ilw-catbtn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll<HTMLElement>('.ilw-catbtn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const id = btn.dataset.id;
-          document.querySelectorAll<HTMLElement>('.ilw-group').forEach(g => {
-            g.classList.toggle('visible', g.dataset.group === id);
-          });
+      function selectDesktopGroup(id: string, updateUrl = false): void {
+        const groupElement = document.querySelector<HTMLElement>(`.ilw-group[data-group="${id}"]`);
+        if (!groupElement) return;
+        document.querySelectorAll<HTMLElement>('.ilw-catbtn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.id === id);
         });
+        document.querySelectorAll<HTMLElement>('.ilw-group').forEach(groupElement => {
+          groupElement.classList.toggle('visible', groupElement.dataset.group === id);
+        });
+        if (updateUrl) {
+          const url = new URL(window.location.href);
+          url.searchParams.set('category', id);
+          window.history.pushState({}, '', url);
+        }
+      }
+
+      document.querySelectorAll<HTMLElement>('.ilw-catbtn').forEach(btn => {
+        btn.addEventListener('click', () => selectDesktopGroup(btn.dataset.id ?? '', true));
       });
+
+      const requestedDesktopGroup = new URLSearchParams(window.location.search).get('category');
+      const defaultDesktopGroup = document.querySelector<HTMLElement>('.ilw-catbtn')?.dataset.id ?? 'concept-art';
+      selectDesktopGroup(requestedDesktopGroup ?? defaultDesktopGroup);
 
       document.querySelectorAll<HTMLElement>('.ilw-group').forEach(group => {
         const items = Array.from(group.querySelectorAll<HTMLElement>('.ilw-item'));
@@ -1082,16 +1095,26 @@ const illustrativeWorkGroups = [
         currentGroupM = groupData;
       }
 
-      document.querySelectorAll('.ilw-catbtn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.ilw-catbtn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const group = illustrativeWorkGroups.find(g => g.id === btn.dataset.id);
-          if (group) renderGroupMobile(group);
+      function selectMobileGroup(id, updateUrl = false) {
+        const group = illustrativeWorkGroups.find(g => g.id === id);
+        if (!group) return;
+        document.querySelectorAll('.ilw-catbtn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.id === id);
         });
+        renderGroupMobile(group);
+        if (updateUrl) {
+          const url = new URL(window.location.href);
+          url.searchParams.set('category', id);
+          window.history.pushState({}, '', url);
+        }
+      }
+
+      document.querySelectorAll('.ilw-catbtn').forEach(btn => {
+        btn.addEventListener('click', () => selectMobileGroup(btn.dataset.id, true));
       });
 
-      renderGroupMobile(illustrativeWorkGroups[0]);
+      const requestedMobileGroup = new URLSearchParams(window.location.search).get('category');
+      selectMobileGroup(requestedMobileGroup || illustrativeWorkGroups[0].id);
 
       function showImageMobile(index) {
         currentIndexM = index;
