@@ -6,6 +6,17 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
 const illustrativeWorkGroups = [
   {
+    id: 'branding',
+    title: 'Branding',
+    description: 'Branding and visual identity work.',
+    works: [
+      { src: '/portfolio/illustrative/branding1.webp', alt: 'Branding 1' },
+      { src: '/portfolio/illustrative/branding2.webp', alt: 'Branding 2' },
+      { src: '/portfolio/illustrative/branding3.webp', alt: 'Branding 3' },
+      { src: '/portfolio/illustrative/brandingmain.webp', alt: 'Branding main' },
+    ],
+  },
+  {
     id: 'concept-art',
     title: 'Concept Art',
     description: 'Here is a selection of some of my work!',
@@ -38,18 +49,7 @@ const illustrativeWorkGroups = [
       { src: '/portfolio/illustrative/item14.webp', alt: 'Item 14' },
     ],
   },
-  {
-    id: 'branding',
-    title: 'Branding',
-    description: 'Branding and visual identity work.',
-    works: [
-      { src: '/portfolio/illustrative/branding1.webp', alt: 'Branding 1' },
-      { src: '/portfolio/illustrative/branding2.webp', alt: 'Branding 2' },
-      { src: '/portfolio/illustrative/branding3.webp', alt: 'Branding 3' },
-      { src: '/portfolio/illustrative/branding4.webp', alt: 'Branding 4' },
-      { src: '/portfolio/illustrative/brandingmain.webp', alt: 'Branding main' },
-    ],
-  },
+
   {
     id: 'commissioned-works',
     title: 'Commissioned Works',
@@ -68,6 +68,8 @@ const illustrativeWorkGroups = [
     ],
   },
 ];
+
+const thumbnailSrc = (src: string) => src.replace('/portfolio/illustrative/', '/portfolio/illustrative/thumbs/');
 ---
 
 <!doctype html>
@@ -82,6 +84,8 @@ const illustrativeWorkGroups = [
         margin: 0;
         padding: 0 !important;
         font-size: 16px;
+        width: 100%;
+        max-width: 100vw;
       }
 
       main {
@@ -90,6 +94,12 @@ const illustrativeWorkGroups = [
         margin: 0 !important;
         padding: 0 !important;
         overflow-x: hidden;
+      }
+
+      .ilw-hero {
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: clip;
       }
 
       /* ── HERO ── */
@@ -372,7 +382,7 @@ const illustrativeWorkGroups = [
       /* ── GRID ── */
       .ilw-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         gap: 20px;
       }
 
@@ -563,6 +573,12 @@ const illustrativeWorkGroups = [
         user-select: none;
         -webkit-user-drag: none;
         touch-action: pan-y;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+
+      .ilw-modal-img.is-loaded {
+        opacity: 1;
       }
 
       /* ── MOBILE MODAL ── */
@@ -592,6 +608,7 @@ const illustrativeWorkGroups = [
         -webkit-user-drag: none;
         touch-action: pan-y;
         opacity: 0;
+        transition: opacity 0.25s ease;
       }
 
       .ilw-modal-img-mobile.is-current {
@@ -675,6 +692,22 @@ const illustrativeWorkGroups = [
         .ilw-grid {
           grid-template-columns: repeat(2, 1fr) !important;
           gap: 12px !important;
+        }
+
+        .ilw-grid-placeholder {
+          display: none;
+        }
+
+        .ilw-item.concept-row-four-col-two,
+        .ilw-item.concept-row-four-col-three,
+        .ilw-item.concept-row-four-col-four,
+        .ilw-item.concept-row-four-col-five,
+        .ilw-item.concept-row-five-col-one,
+        .ilw-item.concept-row-five-col-two,
+        .ilw-item.concept-row-five-col-three,
+        .ilw-item.concept-row-five-col-four {
+          grid-column: auto;
+          grid-row: auto;
         }
         .ilw-item {
           border-radius: 16px;
@@ -766,17 +799,15 @@ const illustrativeWorkGroups = [
                 <p class="ilw-group-desc">{group.description}</p>
                 <div class="ilw-grid">
                   {group.works.map((work, index) => (
-                    <div
-                      class="ilw-item"
-                      data-src={work.src}
-                      data-alt={work.alt}
-                      data-index={index}
-                    >
-                      <img src={work.src} alt={work.alt} loading="lazy" decoding="async" />
-                      <div class="ilw-item-overlay">
-                        <span class="ilw-item-label">{group.title} #{index + 1}</span>
+                    <Fragment>
+                      <div class="ilw-item"
+                        data-src={work.src}
+                        data-alt={work.alt}
+                        data-index={index}
+                      >
+                        <img src={thumbnailSrc(work.src)} alt={work.alt} loading="lazy" decoding="async" />
                       </div>
-                    </div>
+                    </Fragment>
                   ))}
                 </div>
               </div>
@@ -874,6 +905,10 @@ const illustrativeWorkGroups = [
         const prev = index > 0 ? currentGroup[index - 1] : null;
         const curr = currentGroup[index];
         const next = index < currentGroup.length - 1 ? currentGroup[index + 1] : null;
+        [imgPrev, imgCurrent, imgNext].forEach((image) => {
+          image.classList.remove('is-loaded');
+          image.onload = () => image.classList.add('is-loaded');
+        });
         imgPrev.src = prev?.src ?? '';
         imgPrev.alt = prev?.alt ?? '';
         imgCurrent.src = curr?.src ?? '';
@@ -1041,6 +1076,7 @@ const illustrativeWorkGroups = [
       let backEl = imgBM;
 
       const mobileImageCache = new Map();
+      const thumbnailSrc = (src) => src.replace('/portfolio/illustrative/', '/portfolio/illustrative/thumbs/');
 
       function preloadMobile(src) {
         if (!src) return Promise.resolve();
@@ -1069,7 +1105,7 @@ const illustrativeWorkGroups = [
           <div class="ilw-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
             ${group.works.map((work, index) => `
               <div class="ilw-item" data-src="${work.src}" data-alt="${work.alt}" data-index="${index}" style="border-radius:16px;overflow:hidden;">
-                <img src="${work.src}" alt="${work.alt}" loading="lazy" decoding="async" />
+                <img src="${thumbnailSrc(work.src)}" alt="${work.alt}" loading="lazy" decoding="async" />
               </div>
             `).join('')}
           </div>
@@ -1251,7 +1287,11 @@ const illustrativeWorkGroups = [
       pageSwitchMenu.querySelectorAll<HTMLElement>('li').forEach(li => {
         li.addEventListener('click', () => {
           const href = li.dataset.href;
-          if (href) window.location.href = href;
+          if (href) {
+            const transitionLink = document.createElement('a');
+            transitionLink.href = href;
+            transitionLink.click();
+          }
         });
       });
 

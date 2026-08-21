@@ -4,6 +4,8 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
+const thumbnailSrc = (src: string) => src.replace('/portfolio/non-illustrative/', '/portfolio/non-illustrative/thumbs/');
+
 const ceramicsWorks = [
   { src: '/portfolio/non-illustrative/dice1.webp', alt: 'Dice 1' },
   { src: '/portfolio/non-illustrative/dice2.webp', alt: 'Dice 2' },
@@ -392,7 +394,7 @@ const ceramicsWorks = [
       /* ── GRID ── */
       .ilw-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         gap: 20px;
       }
 
@@ -498,6 +500,7 @@ const ceramicsWorks = [
         -webkit-user-drag: none;
         touch-action: pan-y;
         opacity: 0;
+        transition: opacity 0.25s ease;
       }
 
       .ilw-modal-img.is-current {
@@ -783,10 +786,7 @@ const ceramicsWorks = [
                   data-alt={work.alt}
                   data-index={index}
                 >
-                  <img src={work.src} alt={work.alt} loading="lazy" decoding="async" />
-                  <div class="ilw-item-overlay">
-                    <span class="ilw-item-label">Ceramics #{index + 1}</span>
-                  </div>
+                  <img src={thumbnailSrc(work.src)} alt={work.alt} loading="lazy" decoding="async" />
                 </div>
               ))}
             </div>
@@ -1052,7 +1052,11 @@ const ceramicsWorks = [
       pageSwitchMenu.querySelectorAll<HTMLElement>('li').forEach(li => {
         li.addEventListener('click', () => {
           const href = li.dataset.href;
-          if (href) window.location.href = href;
+          if (href) {
+            const transitionLink = document.createElement('a');
+            transitionLink.href = href;
+            transitionLink.click();
+          }
         });
       });
 

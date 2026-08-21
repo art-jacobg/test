@@ -10,6 +10,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
+    "optimize-images": "node scripts/generate-portfolio-thumbnails.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "sharp": "^0.35.3",
     "typescript": "^6.0.3"
   }
 }

@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 const cardCount = 22;
+const thumbnailSrc = (src: string) => src.replace('/portfolio/tarot/', '/portfolio/tarot/thumbs/');
 ---
 
 <!doctype html>
@@ -15,7 +16,12 @@ const cardCount = 22;
     <style>
       *, *::before, *::after { box-sizing: border-box; }
 
-      html { font-size: 16px; }
+      html {
+  font-size: 16px;
+  background: #c9a34b;
+  transition: background-color 250ms ease;
+  overflow-x: hidden; /* ADD THIS */
+}
 
       body {
         margin: 0;
@@ -64,6 +70,13 @@ const cardCount = 22;
         width: min(1050px, 90vw);
         margin: 0 auto;
         padding: clamp(4rem, 8vw, 7rem) 1rem clamp(4rem, 8vw, 7rem);
+        opacity: 0;
+        animation: tarotContentIn 700ms ease-out 500ms forwards;
+      }
+
+      @keyframes tarotContentIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       /* ── TITLE ── */
@@ -175,7 +188,7 @@ const cardCount = 22;
         color: white;
       }
 
-      /* ── INTRO BOX ── */
+      /* ── INTRO BOX (reverted to original — intentional design) ── */
       .ilw-intro {
         position: relative;
         width: min(680px, 100%);
@@ -267,7 +280,7 @@ const cardCount = 22;
       /* ── GRID ── */
       .tarot-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         gap: clamp(1rem, 2vw, 2.5rem);
         margin-top: clamp(6rem, 11vw, 9rem);
       }
@@ -278,6 +291,11 @@ const cardCount = 22;
         cursor: pointer;
         transition: transform 0.25s ease, box-shadow 0.25s ease;
       }
+
+      .tarot-card.final-row-one { grid-column: 2; grid-row: 4; }
+      .tarot-card.final-row-two { grid-column: 3; grid-row: 4; }
+      .tarot-card.final-row-three { grid-column: 4; grid-row: 4; }
+      .tarot-card.final-row-four { grid-column: 5; grid-row: 4; }
 
       .tarot-card:hover {
         transform: translateY(-8px) scale(1.03);
@@ -333,13 +351,15 @@ const cardCount = 22;
         height: 100%;
         perspective: 1400px;
         transform: scale(0.92) translateX(0);
-        transition: transform 0.35s ease;
+        transition: transform 0.35s ease, opacity 0.35s ease;
         flex-shrink: 0;
         opacity: 0;
+        pointer-events: none; /* FIX: inactive stacked card (A or B) no longer eats hover/clicks meant for the visible one */
       }
 
       .modal-card.is-current {
         opacity: 1;
+        pointer-events: auto; /* FIX: only the visible/current card is interactive */
       }
 
       .modal.active .modal-card.is-current {
@@ -354,7 +374,10 @@ const cardCount = 22;
         transition: transform 0.75s ease;
       }
 
-      .modal-card.is-current:hover .modal-flipper {
+      /* Flip is driven by a JS-toggled class (see script) rather than :hover,
+         since two stacked absolutely-positioned cards swap which one is
+         "current" on every navigation, which made :hover targeting fragile. */
+      .modal-card.is-current.is-flipped .modal-flipper {
         transform: rotateY(180deg);
       }
 
@@ -363,6 +386,7 @@ const cardCount = 22;
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
+        pointer-events: none;
       }
 
       .modal-back { transform: rotateY(180deg); }
@@ -530,6 +554,13 @@ const cardCount = 22;
         .ilw-wrap { padding: 28px 0.75rem; }
         .ilw-title { font-size: clamp(2.4rem, 14vw, 3.8rem); }
         .tarot-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+        .tarot-card.final-row-one,
+        .tarot-card.final-row-two,
+        .tarot-card.final-row-three,
+        .tarot-card.final-row-four {
+          grid-column: auto;
+          grid-row: auto;
+        }
       }
     </style>
   </head>
@@ -555,7 +586,7 @@ const cardCount = 22;
             <ul id="ilwPageSwitchMenu" class="ilw-page-switch-menu" role="listbox">
               <li role="option" data-href="/portfolio/illustrative">Illustrative</li>
               <li role="option" data-href="/portfolio/non-illustrative">Non-Illustrative</li>
-              <li role="option" data-href="/portfolio/tarot" class="active">Tarot</li>
+              <li role="option" data-href="/tarot" class="active">Tarot</li>
               <li role="option" data-href="/portfolio/upcoming">Upcoming</li>
             </ul>
           </div>
@@ -587,7 +618,7 @@ const cardCount = 22;
                 <p class="ilw-intro-body">
                   January 6th is a long and complex subject, but once you understand what happened its impossible to come to any conclusion other than that Donald Trump and his allies attempted to subvert the will of the people and overthrow democracy through intentionally illegal means.
                 </p>
-                <p class="ilw-intro-label" style="margin-top: 6px;">Hover a card to reveal its back</p>
+                <p class="ilw-intro-label" style="margin-top: 6px;">Click cards to enlarge, then hover over the enlarged card to reveal its back.</p>
               </div>
 
             </div>
@@ -597,12 +628,12 @@ const cardCount = 22;
           <div class="tarot-grid">
             {Array.from({ length: cardCount }, (_, i) => (
               <div
-                class="tarot-card"
+                class={`tarot-card${i >= 18 ? ` final-row-${i - 17 === 1 ? 'one' : i - 17 === 2 ? 'two' : i - 17 === 3 ? 'three' : 'four'}` : ''}`}
                 data-front={`/portfolio/tarot/${i}.webp`}
                 data-back={`/portfolio/tarot/${i} back.webp`}
                 data-index={i}
               >
-                <img src={`/portfolio/tarot/${i}.webp`} alt={`Tarot card ${i}`} loading="lazy" decoding="async" />
+                <img src={thumbnailSrc(`/portfolio/tarot/${i}.webp`)} alt={`Tarot card ${i}`} loading="lazy" decoding="async" />
               </div>
             ))}
           </div>
@@ -654,6 +685,7 @@ const cardCount = 22;
       import { createImagePreloader } from '../scripts/portfolio-media';
 
       const modal        = document.getElementById('modal') as HTMLElement;
+      const modalStage   = document.querySelector('.modal-stage') as HTMLElement;
       const cardA        = document.getElementById('modalCardA') as HTMLElement;
       const cardB        = document.getElementById('modalCardB') as HTMLElement;
       const modalPrev    = document.getElementById('modalPrev') as HTMLButtonElement;
@@ -701,10 +733,18 @@ const cardCount = 22;
         frontImg.src = data?.front ?? '';
         backImg.src  = data?.back ?? '';
         const flipper = cardEl.querySelector('.modal-flipper') as HTMLElement;
+        // Snap instantly to the front face with no transition (avoids a visible
+        // spin when new images load into a card that was previously flipped).
         flipper.style.transition = 'none';
         flipper.style.transform = 'rotateY(0deg)';
         requestAnimationFrame(() => {
           flipper.style.transition = '';
+          // FIX (root cause of the flip not working): this inline transform
+          // was never cleared, and inline styles always beat stylesheet rules
+          // (short of !important). That permanently pinned every card at
+          // rotateY(0deg), so no CSS class or :hover rule could ever rotate
+          // it. Clearing it here hands control back to the stylesheet.
+          flipper.style.transform = '';
         });
       }
 
@@ -713,12 +753,14 @@ const cardCount = 22;
         const data = cardData[currentIndex];
 
         setCardFaces(frontCard, data);
-        frontCard.style.transition = 'none';
+        frontCard.style.transition = 'transform 0.35s ease';
         frontCard.style.transform = 'translateX(0) scale(1)';
+        frontCard.classList.remove('is-flipped');
         frontCard.classList.add('is-current');
 
         backCard.classList.remove('is-current');
-        backCard.style.transition = 'none';
+        backCard.classList.remove('is-flipped');
+        backCard.style.transition = 'transform 0.35s ease';
 
         modalCounter.textContent = `${currentIndex + 1} / ${cardData.length}  ·  hover to flip`;
         modalPrev.disabled = currentIndex === 0;
@@ -740,6 +782,7 @@ const cardCount = 22;
           setCardFaces(backCard, data);
           backCard.style.transition = 'none';
           backCard.style.transform = `translateX(${enterFrom}) scale(1)`;
+          backCard.classList.remove('is-flipped');
           backCard.classList.add('is-current');
 
           void backCard.offsetWidth;
@@ -752,6 +795,7 @@ const cardCount = 22;
 
             setTimeout(() => {
               frontCard.classList.remove('is-current');
+              frontCard.classList.remove('is-flipped');
               currentIndex = newIndex;
               modalCounter.textContent = `${currentIndex + 1} / ${cardData.length}  ·  hover to flip`;
               modalPrev.disabled = currentIndex === 0;
@@ -769,9 +813,11 @@ const cardCount = 22;
       }
 
       function openModal(index: number): void {
-        showCard(index);
-        modal.classList.add('active');
-        void preloadAround(index);
+        preloadCard(index).then(() => {
+          showCard(index);
+          modal.classList.add('active');
+          void preloadAround(index);
+        });
       }
 
       function closeModal(): void {
@@ -783,6 +829,7 @@ const cardCount = 22;
             frontImg.src = '';
             backImg.src = '';
             cardEl.classList.remove('is-current');
+            cardEl.classList.remove('is-flipped');
           });
           frontCard = cardA;
           backCard = cardB;
@@ -797,6 +844,16 @@ const cardCount = 22;
             openModal(index);
           }, 120);
         });
+      });
+
+      // JS-driven flip: one listener on the stable .modal-stage container,
+      // toggling .is-flipped on whichever card is currently front-facing.
+      modalStage.addEventListener('mouseenter', () => {
+        frontCard.classList.add('is-flipped');
+      });
+
+      modalStage.addEventListener('mouseleave', () => {
+        frontCard.classList.remove('is-flipped');
       });
 
       modalPrev.addEventListener('click', () => {
@@ -885,7 +942,11 @@ const cardCount = 22;
       pageSwitchMenu.querySelectorAll<HTMLElement>('li').forEach(li => {
         li.addEventListener('click', () => {
           const href = li.dataset.href;
-          if (href) window.location.href = href;
+          if (href) {
+            const transitionLink = document.createElement('a');
+            transitionLink.href = href;
+            transitionLink.click();
+          }
         });
       });
 

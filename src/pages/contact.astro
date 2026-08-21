@@ -60,7 +60,7 @@ import Footer from '../components/Footer.astro';
         padding-top: 132px;
         padding-bottom: 450px;
         transform: translateX(1rem);
-        animation: fadeIn 500ms ease 200ms forwards;
+        animation: fadeIn 800ms ease 200ms forwards;
         opacity: 0;
       }
 
@@ -389,7 +389,7 @@ import Footer from '../components/Footer.astro';
     <!-- Mobile fixed background: lives here, outside Header/main/Footer,
          so it has zero entanglement with their layout, transforms, or
          stacking contexts. Only visible/active in the mobile media query. -->
-    <video class="mobile-bg-video" autoplay muted loop playsinline preload="metadata">
+    <video class="mobile-bg-video" autoplay muted loop playsinline preload="none">
       <source src="/contactmobile.webm" type="video/webm" />
     </video>
 
@@ -414,7 +414,7 @@ import Footer from '../components/Footer.astro';
 
                   <!-- SECTION: Identity + Intro -->
                   <div class="mob-section">
-                    <img class="mob-section-bg" src="/box animation slow1.webp" alt="" aria-hidden="true" />
+                    <img class="mob-section-bg" src="/box animation slow1.webp" alt="" aria-hidden="true" loading="lazy" />
                     <h2 class="contact-name">Get In<br/>Touch</h2>
                     <p class="contact-subtitle">
                       Jacob Gordillo<br/>
@@ -446,7 +446,7 @@ import Footer from '../components/Footer.astro';
 
                   <!-- SECTION: Contact Info -->
                   <div class="mob-section">
-                    <img class="mob-section-bg" src="/box animation slow1.webp" alt="" aria-hidden="true" />
+                    <img class="mob-section-bg" src="/box animation slow1.webp" alt="" aria-hidden="true" loading="lazy" />
                     <p class="contact-section-title">Contact</p>
 
                     <div class="contact-link-item">
@@ -474,7 +474,7 @@ import Footer from '../components/Footer.astro';
 
                   <!-- SECTION: Availability -->
                   <div class="mob-section">
-                    <img class="mob-section-bg" src="/box animation slow1.webp" alt="" aria-hidden="true" />
+                    <img class="mob-section-bg" src="/box animation slow1.webp" alt="" aria-hidden="true" loading="lazy" />
                     <p class="contact-section-title">Availability</p>
 
                     <div class="contact-link-item">

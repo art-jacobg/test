@@ -41,6 +41,8 @@
 
 /* ===================== BASE ===================== */
 html {
+  background: #00e1ff;
+  transition: background-color 250ms ease;
   scroll-behavior: smooth;
   min-height: 100%;
   height: 100%;

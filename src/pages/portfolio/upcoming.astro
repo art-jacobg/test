@@ -3,6 +3,8 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+
+const thumbnailSrc = (src: string) => src.replace('/portfolio/upcoming/', '/portfolio/upcoming/thumbs/');
 ---
 
 <!doctype html>
@@ -423,10 +425,15 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
         box-shadow: 0 0 80px rgba(0,0,0,0.75);
         transform-origin: center center;
         transform: translate(0,0) scale(1);
-        transition: transform 0.15s ease;
+        opacity: 0;
+        transition: opacity 0.25s ease, transform 0.15s ease;
         cursor: default;
         user-select: none;
         -webkit-user-drag: none;
+      }
+
+      .lightbox img.is-loaded {
+        opacity: 1;
       }
 
       .lightbox-close {
@@ -678,7 +685,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
                 <div class="project-img-clip">
                   <img
                     class="project-img"
-                    src="/portfolio/upcoming/swordcomps.webp"
+                    src={thumbnailSrc('/portfolio/upcoming/swordcomps.webp')}
                     alt="Sword Compositions — Future Terraria Mod"
                     loading="lazy"
                     decoding="async"
@@ -740,7 +747,13 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
       }
 
       function openLightbox(): void {
-        if (!lbImg.getAttribute('src')) lbImg.src = lbImg.dataset.src ?? '';
+        lbImg.classList.remove('is-loaded');
+        if (!lbImg.getAttribute('src')) {
+          lbImg.onload = () => lbImg.classList.add('is-loaded');
+          lbImg.src = lbImg.dataset.src ?? '';
+        } else {
+          lbImg.classList.add('is-loaded');
+        }
         resetZoom();
         lightbox.classList.add('active');
       }
@@ -855,7 +868,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
       pageSwitchMenu.querySelectorAll<HTMLElement>('li').forEach(li => {
         li.addEventListener('click', () => {
           const href = li.dataset.href;
-          if (href) window.location.href = href;
+          if (href) {
+            const transitionLink = document.createElement('a');
+            transitionLink.href = href;
+            transitionLink.click();
+          }
         });
       });
 

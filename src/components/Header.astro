@@ -750,11 +750,7 @@
           root.dataset.pageTransition = getDirection(href);
           const navigate = () => window.location.assign(href);
 
-          if (document.startViewTransition) {
-            document.startViewTransition(navigate);
-          } else {
-            navigate();
-          }
+          navigate();
         });
       });
 
